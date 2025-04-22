@@ -19,7 +19,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential libjpeg-dev libpng-dev pkg-config
+        sudo apt-get install -y build-essential libjpeg-dev libjpeg-turbo8-dev libpng-dev pkg-config
 
     - name: Clone and Build jpeg2png repository
       run: |
