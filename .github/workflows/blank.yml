@@ -19,14 +19,14 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential libjpeg-dev libjpeg-turbo8-dev libpng-dev pkg-config
+        sudo apt-get install -y build-essential libjpeg-dev libjpeg-turbo8-dev libpng-dev pkg-config gcc
 
     - name: Clone and Build jpeg2png repository
       run: |
         rm -rf jpeg2png
         git clone https://github.com/ThioJoe/jpeg2png
         cd jpeg2png
-        make # Run make after installing dependencies
+        make CC=gcc
 
     - name: Clone JPEG-Noise-Reduction-Bash-Scripts repository
       run: |
