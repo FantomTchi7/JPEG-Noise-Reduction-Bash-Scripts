@@ -14,13 +14,19 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4 # Updated version
 
-    - name: Clone jpeg2png repository
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential libjpeg-dev libpng-dev pkg-config
+
+    - name: Clone and Build jpeg2png repository
       run: |
         rm -rf jpeg2png
         git clone https://github.com/ThioJoe/jpeg2png
-        cd jpeg2png && make
+        cd jpeg2png
+        make # Run make after installing dependencies
 
     - name: Clone JPEG-Noise-Reduction-Bash-Scripts repository
       run: |
@@ -28,16 +34,21 @@ jobs:
         git clone https://github.com/FantomTchi7/JPEG-Noise-Reduction-Bash-Scripts
 
     - name: Copy jpeg2png to noise reduction script directory
-      run: cp ./jpeg2png/jpeg2png ./JPEG-Noise-Reduction-Bash-Scripts/Jpeg-Noise-Reduction/Jpeg2PNG
+      # Ensure the target directory exists before copying
+      run: |
+        mkdir -p ./JPEG-Noise-Reduction-Bash-Scripts/Jpeg-Noise-Reduction/Jpeg2PNG
+        cp ./jpeg2png/jpeg2png ./JPEG-Noise-Reduction-Bash-Scripts/Jpeg-Noise-Reduction/Jpeg2PNG/
 
     - name: Make script executable
       run: chmod +x "./JPEG-Noise-Reduction-Bash-Scripts/Jpeg-Noise-Reduction/Jpeg2PNG Multi-Variable.sh"
 
     - name: Download image for processing
+      # Use -P to specify the output directory for wget
       run: |
-        cd ./JPEG-Noise-Reduction-Bash-Scripts/Jpeg-Noise-Reduction
-        wget https://upload.wikimedia.org/wikipedia/commons/b/b2/JPEG_compression_Example.jpg
+        wget https://upload.wikimedia.org/wikipedia/commons/b/b2/JPEG_compression_Example.jpg -P ./JPEG-Noise-Reduction-Bash-Scripts/Jpeg-Noise-Reduction/
 
     - name: Run the noise reduction script
+      # Navigate into the directory to simplify paths
+      working-directory: ./JPEG-Noise-Reduction-Bash-Scripts/Jpeg-Noise-Reduction
       run: |
-        ./JPEG-Noise-Reduction-Bash-Scripts/Jpeg-Noise-Reduction/Jpeg2PNG Multi-Variable.sh ./JPEG-Noise-Reduction-Bash-Scripts/Jpeg-Noise-Reduction/JPEG_compression_Example.jpg
+        ./Jpeg2PNG Multi-Variable.sh ./JPEG_compression_Example.jpg
