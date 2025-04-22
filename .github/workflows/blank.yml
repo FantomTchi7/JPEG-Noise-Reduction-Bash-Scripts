@@ -1,0 +1,43 @@
+name: JPEG to PNG Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Clone jpeg2png repository
+      run: |
+        rm -rf jpeg2png
+        git clone https://github.com/ThioJoe/jpeg2png
+        cd jpeg2png && make
+
+    - name: Clone JPEG-Noise-Reduction-Bash-Scripts repository
+      run: |
+        rm -rf JPEG-Noise-Reduction-Bash-Scripts
+        git clone https://github.com/FantomTchi7/JPEG-Noise-Reduction-Bash-Scripts
+
+    - name: Copy jpeg2png to noise reduction script directory
+      run: cp ./jpeg2png/jpeg2png ./JPEG-Noise-Reduction-Bash-Scripts/Jpeg-Noise-Reduction/Jpeg2PNG
+
+    - name: Make script executable
+      run: chmod +x "./JPEG-Noise-Reduction-Bash-Scripts/Jpeg-Noise-Reduction/Jpeg2PNG Multi-Variable.sh"
+
+    - name: Download image for processing
+      run: |
+        cd ./JPEG-Noise-Reduction-Bash-Scripts/Jpeg-Noise-Reduction
+        wget https://upload.wikimedia.org/wikipedia/commons/b/b2/JPEG_compression_Example.jpg
+
+    - name: Run the noise reduction script
+      run: |
+        ./JPEG-Noise-Reduction-Bash-Scripts/Jpeg-Noise-Reduction/Jpeg2PNG Multi-Variable.sh ./JPEG-Noise-Reduction-Bash-Scripts/Jpeg-Noise-Reduction/JPEG_compression_Example.jpg
